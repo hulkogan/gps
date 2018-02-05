@@ -6,7 +6,7 @@ from time import time
 
 
 def acquisition(t_acq):
-    gps = Serial('/dev/gstarIV', 4800)
+    gps = Serial('/dev/ttyUSB0', 4800)
     
     lines = []
     

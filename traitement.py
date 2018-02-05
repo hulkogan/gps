@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 from osgeo import gdal
+from osmapi import OsmApi
 import sys
 
 import matplotlib.pyplot as plt
@@ -120,9 +121,24 @@ def traitement(msgs):
     for prn, sat in satellites.items():
         elevation = sat.get_elevation()
         azimuth = sat.get_azimuth()
-
+        
         plt.plot(azimuth, elevation)
+
+    im = gdal.Open('ensta_2015_zoom.tif')
+    nx = im.RasterXSize
+    ny =  im.RasterYSize
+    nb = im.RasterCount
+    image = np.zeros((ny,nx,nb))
+    image[:,:,0]=im.GetRasterBand(1).ReadAsArray()*255
+    image[:,:,1]=im.GetRasterBand(2).ReadAsArray()*255
+    image[:,:,2]=im.GetRasterBand(3).ReadAsArray()*255
+    plt.figure()
+    plt.xlim([500,1000])
+    plt.ylim([1200,800])
+    plt.imshow(image)
+
     
+
     plt.show()
 
     
