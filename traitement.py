@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-import gdal
+from osgeo import gdal
 import sys
 
 import matplotlib.pyplot as plt
