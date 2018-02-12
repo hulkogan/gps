@@ -109,11 +109,17 @@ def traitement(msgs):
     ax.set_thetamax(360)
     ax.set_theta_zero_location('N')
    
+    # Traitement des positions
     for prn, sat in satellites.items():
-        elevation = sat.get_elevation()
-        azimuth = sat.get_azimuth()
+        elevations = sat.get_elevation()
+        azimuths = sat.get_azimuth()
+        print(elevations)
+
+        # Conversion en radians
+        elevations = [int(elevation)*np.pi/180 for elevation in elevations]
+        azimuths = [int(azimuth)*np.pi/180 for azimuth in azimuths]
         
-        plt.plot(azimuth, elevation)
+        plt.plot(azimuths, elevations)
 
     plt.show()
 
