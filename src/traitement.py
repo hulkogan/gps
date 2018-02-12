@@ -146,7 +146,6 @@ def traitement(msgs):
     # Affichage des donnees
 
     #  Affichage des satellites actifs en fonction du temps
-    satellite_a=traitement()
     x=list(satellite_a.keys())
     y=list(satellite_a.values())
     x=[[x[j] for i in range(len(y[j]))] for j in range(len(x))]
