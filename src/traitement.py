@@ -101,6 +101,15 @@ def traitement(msgs):
     
     
     # Affichage des donnees
+
+    #Affichage de la position (long/lat)
+    plt.figure()
+    plt.scatter(long, lat)
+    plt.xlabel('Longitude')
+    plt.ylabel('Latitude')
+    plt.grid()
+
+    # Affichage de la position des satellites
     fig = plt.figure()
     ax = fig.add_axes([0, 0, 1, 1], polar=True)
 
@@ -124,7 +133,7 @@ def traitement(msgs):
 
     
 if __name__=='__main__':
-    file = 'data'
+    file = 'data/data_uv24.nmea'
     
     i = 0
     n = len(sys.argv)
