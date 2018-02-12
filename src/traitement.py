@@ -28,6 +28,11 @@ class Satellite:
         return self.prn
 
 
+def dmstodd(degre):
+    d = int(degre/100)
+    m = degre - d*100
+    return d + m/60
+
 def traitement(msgs):
     trames = []
     for msg in msgs:
@@ -110,14 +115,18 @@ def traitement(msgs):
     image[:,:,1]=im.GetRasterBand(2).ReadAsArray()*255
     image[:,:,2]=im.GetRasterBand(3).ReadAsArray()*255
     plt.figure()
-    #plt.xlim([500,1000])
-    #plt.ylim([1200,800])
+    plt.xlim([500,1000])
+    plt.ylim([1200,800])
     
     # origin_x et origin_y sont dans le format lambert 93
     origin_x, pixel_width, _, origin_y, _, pixel_height = im.GetGeoTransform()
 
-    wgs84 = pyproj.Proj('+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +no_defs')
-    lambert = pyproj.Proj('+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
+    wgs84 = pyproj.Proj(init='epsg:4326')
+    lambert = pyproj.Proj(init='epsg:2154')
+
+    # Conversion en degrés décimaux
+    long = [-dmstodd(x) for x in long]
+    lat = [dmstodd(x) for x in lat]
 
     lx, ly = pyproj.transform(wgs84, lambert, long,
                               lat)
@@ -125,13 +134,12 @@ def traitement(msgs):
     lx = np.array(lx)
     ly = np.array(ly)
 
+    # Conversion en coordonnées sur l'image
     x = (lx - origin_x) / pixel_width
     y = (ly - origin_y) / pixel_height
     plt.imshow(image)
     plt.scatter(x, y)
-    
 
-    print(lx[0], origin_x)
     plt.show()
 
     
