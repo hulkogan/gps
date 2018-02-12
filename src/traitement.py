@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 from osgeo import gdal
-from osmapi import OsmApi
 import pyproj
 import sys
 
@@ -45,7 +44,7 @@ def traitement(msgs):
     
     satellites = dict()    
 
-    satellites_a = dict()    
+    satellite_a = dict()    
 
     # Lecture des donnees
     for trame in trames:
@@ -160,7 +159,6 @@ def traitement(msgs):
     plt.xlabel('Heure',Fontsize=20,FontWeight='bold') ## ZULU OU AUTRE?
     plt.ylabel('Satellite numéro',Fontsize=20,FontWeight='bold')
     plt.title('SATELLITES ACTIFS EN FONCTION DU TEMPS', Fontsize='30', FontWeight='bold',Color='r')
-    plt.figure()
 
     plt.figure()
     plt.scatter(long, lat)
