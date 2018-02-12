@@ -152,8 +152,10 @@ def traitement(msgs):
     plt.figure()
     axes=plt.gca()
     for i in range(len(x)):
-        plt.scatter(x[i],y[i],c='g')
-    axes.set_xticks([x[15*i][0] for i in range(len(x)//15)])
+        plt.plot(x[i],y[i],'go')
+    ab=np.linspace(0,len(x)-1,15)
+    xlab=[x[int(i)][0] for i in ab]
+    plt.xticks(ab,xlab)
     axes.set_yticks([i for i in range(1,33)])
     plt.xlabel('Heure',Fontsize=20,FontWeight='bold') ## ZULU OU AUTRE?
     plt.ylabel('Satellite numéro',Fontsize=20,FontWeight='bold')
