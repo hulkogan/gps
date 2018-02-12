@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
+# coding: utf8
 from osgeo import gdal
 import pyproj
 import sys
@@ -41,17 +42,17 @@ def traitement(msgs):
     lat = []
 
     temps = None
-    
-    satellites = dict()    
 
-    satellite_a = dict()    
+    satellites = dict()
+
+    satellite_a = dict()
 
     # Lecture des donnees
     for trame in trames:
         if trame.sentence_type == 'GGA' and trame.is_valid:
             long.append(float(trame.lon))
             lat.append(float(trame.lat))
-            temps = trame.timestamp
+            temps = trame.timestamp    
 
         if trame.sentence_type == 'GSA':
             temps_str=str(temps.hour)+':'+str(temps.minute)+':'+str(temps.second)
@@ -91,7 +92,7 @@ def traitement(msgs):
                 satellite_a[temps_str].append(int(trame.sv_id11))  
                 
             if trame.sv_id12!='':
-                satellite_a[temps_str].append(int(trame.sv_id12))        
+                satellite_a[temps_str].append(int(trame.sv_id12))
 
         if trame.sentence_type == 'GSV':
             if len(trame.sv_prn_num_1) > 0:
@@ -159,70 +160,41 @@ def traitement(msgs):
     axes.set_yticks([i for i in range(1,33)])
     plt.xlabel('Heure',Fontsize=20,FontWeight='bold') ## ZULU OU AUTRE?
     plt.ylabel('Satellite numéro',Fontsize=20,FontWeight='bold')
-    plt.title('SATELLITES ACTIFS EN FONCTION DU TEMPS', Fontsize='30', FontWeight='bold',Color='r')
+    plt.title('SATELLITES ACTIFS EN FONCTION DU TEMPS',
+              Fontsize='30', FontWeight='bold',Color='r')
 
+    #Affichage de la position (long/lat)
     plt.figure()
     plt.scatter(long, lat)
     plt.xlabel('Longitude')
     plt.ylabel('Latitude')
     plt.grid()
-    
+
+    # Affichage de la position des satellites
     fig = plt.figure()
     ax = fig.add_axes([0, 0, 1, 1], polar=True)
-    
-    # elevation
-#    ax.set_rmin(0)
-#    ax.set_rmax(90)
-    
-    
-    #azimuth
-    # Regler axes r
+
+    # Reglage des axes
     ax.set_thetamin(0)
     ax.set_thetamax(360)
     ax.set_theta_zero_location('N')
    
+    # Traitement des positions
     for prn, sat in satellites.items():
-        elevation = sat.get_elevation()
-        azimuth = sat.get_azimuth()
+        elevations = sat.get_elevation()
+        azimuths = sat.get_azimuth()
+
+        # Conversion en radians
+        elevations = [int(elevation)*np.pi/180 for elevation in elevations]
+        azimuths = [int(azimuth)*np.pi/180 for azimuth in azimuths]
         
-        plt.plot(azimuth, elevation)
+        plt.plot(azimuths, elevations)
 
-    im = gdal.Open('res/ensta_2015.jpg')
-    nx = im.RasterXSize
-    ny =  im.RasterYSize
-    nb = im.RasterCount
-    image = np.zeros((ny,nx,nb))
-    image[:,:,0]=im.GetRasterBand(1).ReadAsArray()*255
-    image[:,:,1]=im.GetRasterBand(2).ReadAsArray()*255
-    image[:,:,2]=im.GetRasterBand(3).ReadAsArray()*255
-    plt.figure()
-    #plt.xlim([500,1000])
-    #plt.ylim([1200,800])
-    
-    # origin_x et origin_y sont dans le format lambert 93
-    origin_x, pixel_width, _, origin_y, _, pixel_height = im.GetGeoTransform()
-
-    wgs84 = pyproj.Proj('+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
-    lambert = pyproj.Proj('+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
-
-    lx, ly = pyproj.transform(wgs84, lambert, long,
-                              lat)
-
-    lx = np.array(lx)
-    ly = np.array(ly)
-
-    x = (lx - origin_x) / pixel_width
-    y = (ly - origin_y) / pixel_height
-    plt.imshow(image)
-    plt.scatter(x, y)
-    
-
-    print(lx[0], origin_x)
     plt.show()
 
     
 if __name__=='__main__':
-    file = 'data'
+    file = 'data/data_uv24.nmea'
     
     i = 0
     n = len(sys.argv)
