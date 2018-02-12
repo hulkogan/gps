@@ -100,27 +100,7 @@ def traitement(msgs):
     
     # Affichage des donnees
 
-    # Affichage des position des satellites
-    fig = plt.figure()
-    ax = fig.add_axes([0, 0, 1, 1], polar=True)
-
-    # Reglage des axes
-    ax.set_thetamin(0)
-    ax.set_thetamax(360)
-    ax.set_theta_zero_location('N')
-
-    # Traitement des positions
-    for prn, sat in satellites.items():
-        elevation = sat.get_elevation()
-        azimuth = sat.get_azimuth()
-        
-        # Conversion en radians
-        elevation = elevation*np.pi/180
-        azimuth = azimuth*np.pi/180
-        
-        plt.plot(azimuth, elevation)
-
-
+    # Affichage sur une carte
     im = gdal.Open('res/ensta_2015.jpg')
     nx = im.RasterXSize
     ny =  im.RasterYSize
@@ -136,7 +116,7 @@ def traitement(msgs):
     # origin_x et origin_y sont dans le format lambert 93
     origin_x, pixel_width, _, origin_y, _, pixel_height = im.GetGeoTransform()
 
-    wgs84 = pyproj.Proj('+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+    wgs84 = pyproj.Proj('+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +no_defs')
     lambert = pyproj.Proj('+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
 
     lx, ly = pyproj.transform(wgs84, lambert, long,
@@ -156,7 +136,7 @@ def traitement(msgs):
 
     
 if __name__=='__main__':
-    file = 'data'
+    file = 'data/data_uv24.nmea'
     
     i = 0
     n = len(sys.argv)
