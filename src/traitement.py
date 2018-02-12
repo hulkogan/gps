@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# coding: utf8
 from osgeo import gdal
 import pyproj
 import sys
