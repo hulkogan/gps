@@ -39,59 +39,14 @@ def traitement(msgs):
 
     long = []
     lat = []
-
-    temps = None
     
-    satellites = dict()    
-
-    satellites_a = dict()    
+    satellites = dict()   
 
     # Lecture des donnees
     for trame in trames:
         if trame.sentence_type == 'GGA' and trame.is_valid:
             long.append(float(trame.lon))
             lat.append(float(trame.lat))
-            temps = trame.timestamp
-
-        if trame.sentence_type == 'GSA':
-            temps_str=str(temps.hour)+':'+str(temps.minute)+':'+str(temps.second)
-            satellite_a[temps_str]=[]
-            
-            if trame.sv_id01!='':
-                satellite_a[temps_str].append(int(trame.sv_id01))
-
-            if trame.sv_id02!='':
-                satellite_a[temps_str].append(int(trame.sv_id02))
-                
-            if trame.sv_id03!='':
-                satellite_a[temps_str].append(int(trame.sv_id03))
-                
-            if trame.sv_id04!='':
-                satellite_a[temps_str].append(int(trame.sv_id04))
-                
-            if trame.sv_id05!='':
-                satellite_a[temps_str].append(int(trame.sv_id05))
-
-            if trame.sv_id06!='':
-                satellite_a[temps_str].append(int(trame.sv_id06))
-                
-            if trame.sv_id07!='':
-                satellite_a[temps_str].append(int(trame.sv_id07))
-  
-            if trame.sv_id08!='':
-                satellite_a[temps_str].append(int(trame.sv_id08))
-                
-            if trame.sv_id09!='':
-                satellite_a[temps_str].append(int(trame.sv_id09))
-                
-            if trame.sv_id10!='':
-                satellite_a[temps_str].append(int(trame.sv_id10))  
-                
-            if trame.sv_id11!='':
-                satellite_a[temps_str].append(int(trame.sv_id11))  
-                
-            if trame.sv_id12!='':
-                satellite_a[temps_str].append(int(trame.sv_id12))        
 
         if trame.sentence_type == 'GSV':
             if len(trame.sv_prn_num_1) > 0:
@@ -145,46 +100,26 @@ def traitement(msgs):
     
     # Affichage des donnees
 
-    #  Affichage des satellites actifs en fonction du temps
-    x=list(satellite_a.keys())
-    y=list(satellite_a.values())
-    x=[[x[j] for i in range(len(y[j]))] for j in range(len(x))]
-    plt.figure()
-    axes=plt.gca()
-    for i in range(len(x)):
-        plt.scatter(x[i],y[i],c='g')
-    axes.set_xticks([x[15*i][0] for i in range(len(x)//15)])
-    axes.set_yticks([i for i in range(1,33)])
-    plt.xlabel('Heure',Fontsize=20,FontWeight='bold') ## ZULU OU AUTRE?
-    plt.ylabel('Satellite numéro',Fontsize=20,FontWeight='bold')
-    plt.title('SATELLITES ACTIFS EN FONCTION DU TEMPS', Fontsize='30', FontWeight='bold',Color='r')
-    plt.figure()
-
-    plt.figure()
-    plt.scatter(long, lat)
-    plt.xlabel('Longitude')
-    plt.ylabel('Latitude')
-    plt.grid()
-    
+    # Affichage des position des satellites
     fig = plt.figure()
     ax = fig.add_axes([0, 0, 1, 1], polar=True)
-    
-    # elevation
-#    ax.set_rmin(0)
-#    ax.set_rmax(90)
-    
-    
-    #azimuth
-    # Regler axes r
+
+    # Reglage des axes
     ax.set_thetamin(0)
     ax.set_thetamax(360)
     ax.set_theta_zero_location('N')
-   
+
+    # Traitement des positions
     for prn, sat in satellites.items():
         elevation = sat.get_elevation()
         azimuth = sat.get_azimuth()
         
+        # Conversion en radians
+        elevation = elevation*np.pi/180
+        azimuth = azimuth*np.pi/180
+        
         plt.plot(azimuth, elevation)
+
 
     im = gdal.Open('res/ensta_2015.jpg')
     nx = im.RasterXSize
