@@ -113,7 +113,6 @@ def traitement(msgs):
     for prn, sat in satellites.items():
         elevations = sat.get_elevation()
         azimuths = sat.get_azimuth()
-        print(elevations)
 
         # Conversion en radians
         elevations = [int(elevation)*np.pi/180 for elevation in elevations]
