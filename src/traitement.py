@@ -101,14 +101,10 @@ def traitement(msgs):
     
     
     # Affichage des donnees
-    
-    # elevation
-#    ax.set_rmin(0)
-#    ax.set_rmax(90)
-    
-    
-    #azimuth
-    # Regler axes r
+    fig = plt.figure()
+    ax = fig.add_axes([0, 0, 1, 1], polar=True)
+
+    # Reglage des axes
     ax.set_thetamin(0)
     ax.set_thetamax(360)
     ax.set_theta_zero_location('N')
