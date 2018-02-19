@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pynmea2 as nmea
 
+from traitement_stat import trace_stat
 
 class Satellite:
     def __init__(self, prn):
@@ -131,6 +132,9 @@ def traitement(msgs):
         plt.plot(azimuths, elevations)
 
     plt.show()
+    
+    donnee_stat = [lat, long]
+    trace_stat(donnee_stat)
 
     
 if __name__=='__main__':
