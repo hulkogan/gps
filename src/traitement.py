@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pynmea2 as nmea
 
-from traitement_stat import trace_stat
+from traitement_stat import ecart_type, gauss, moyenne
 
 class Satellite:
     def __init__(self, prn):
@@ -130,13 +130,44 @@ def traitement(msgs):
         azimuths = [int(azimuth)*np.pi/180 for azimuth in azimuths]
         
         plt.plot(azimuths, elevations)
+    
+    donnees = {'lat': lat, 'long': long}
+    
+    plt.style.use('classic')
 
+    for nom, liste in donnees.items():
+        moy = moyenne(liste)
+        ecart = ecart_type(liste)
+        
+        plt.figure()
+        plt.title(nom)
+        plt.xlabel('degrés')
+        plt.ylabel('degrés')
+        ordonnees = np.linspace(min(liste), max(liste), 10)
+        courbe_normale = gauss(ordonnees, ecart, moy)
+        
+        mini = min(courbe_normale)
+        maxi = max(courbe_normale)
+
+        #Cadrage des données pour que tout soit visible notamment la légende
+        plt.ylim(mini - (maxi - mini) * 0.1, maxi + (maxi - mini) * 0)
+        #traçage de la courbe de gauss
+        plt.plot(ordonnees, courbe_normale, 'k', label = 'Loi normale correspondante')
+
+        #traçage des données avec comme abscisse le min de la courbe de Gauss
+        plt.plot(liste,[mini]*len(liste),'b', label = 'Données')            
+        #traçage du point correspondant à la moyenne en rouge
+        plt.plot([moy],[mini],'r', marker='o', markersize=5, label = 'Moyenne des données')
+        #traçage des verticales correspondants à moyenne +/- ecart_type
+        plt.plot([moy-ecart, moy-ecart],[mini, maxi], 'g', label = 'Moyenne $\pm$ écart-type')
+        plt.plot([moy+ecart, moy+ecart],[mini, maxi], 'g')
+    
+        #Affichage de la légende
+        plt.legend(loc = 'upper right')
+    
     plt.show()
-    
-    donnee_stat = [lat, long]
-    trace_stat(donnee_stat)
 
-    
+
 if __name__=='__main__':
     file = 'data/data_uv24.nmea'
     
