@@ -225,7 +225,10 @@ def traitement(msgs):
     y = (ly - origin_y) / pixel_height
     plt.imshow(image)
     plt.scatter(x, y)
-
+    plt.xlabel('Est',Fontsize=20,FontWeight='bold')
+    plt.ylabel('Nord',Fontsize=20,FontWeight='bold')
+    plt.title('POSITION',
+              Fontsize='30', FontWeight='bold',Color='r')
     #  Affichage des satellites actifs en fonction du temps
     x=list(satellite_a.keys())
     y=list(satellite_a.values())
@@ -246,8 +249,10 @@ def traitement(msgs):
     #Affichage de la position (long/lat)
     plt.figure()
     plt.scatter(long, lat)
-    plt.xlabel('Longitude')
-    plt.ylabel('Latitude')
+    plt.xlabel('Longitude en degres',Fontsize=20,FontWeight='bold')
+    plt.ylabel('Latitude en degres',Fontsize=20,FontWeight='bold')
+    plt.title('POSITION DU GPS',
+              Fontsize='30', FontWeight='bold',Color='r')
     plt.grid()
 
     # Affichage de la position des satellites
@@ -269,7 +274,8 @@ def traitement(msgs):
         azimuths = [int(azimuth)*np.pi/180 for azimuth in azimuths]
         
         plt.plot(azimuths, elevations)
-    
+        plt.title('TRAJECTOIRE DES SATELLITES EN VUE(AZIMUTH ET ELEVATION)',
+              Fontsize='30', FontWeight='bold',Color='r')
     donnees = {'lat': lat, 'long': long}
     
     plt.style.use('classic')
