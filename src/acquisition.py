@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 # coding: utf8
+"""
+Ce fichier  est destiné à obtenir des trames nmea à partir d'un recepteur
+GPS.
+"""
 import sys
 
 from serial import Serial
@@ -7,6 +11,10 @@ from time import time
 
 
 def acquisition(t_acq):
+    """
+    Connection au GPS et acquisition des trames nmea.
+    """
+    # Connection au GPS à l'address 
     gps = Serial('/dev/ttyUSB0', 4800)
     
     lines = []
@@ -26,9 +34,11 @@ def acquisition(t_acq):
 if __name__=='__main__':
     print("Acquisition...")
     
-    t_acq = 10
-    out = 'data'
+    t_acq = 10 # Temps d'acquisition
+    out = 'data' # Nom du fichier de sorti
     
+    # Lecture des arguments
+    # -t t_acq -o out
     i = 0
     n = len(sys.argv)
     while i < n:
