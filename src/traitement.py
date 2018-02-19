@@ -1,5 +1,9 @@
 #! /usr/bin/env python3
 # coding: utf8
+"""
+Ce fichier contient les classes et fonctions nécessaires au traitement
+de trames nmea.
+"""
 from osgeo import gdal
 import pyproj
 import sys
@@ -10,31 +14,59 @@ import pynmea2 as nmea
 
 
 class Satellite:
+    """
+    Représentation d'un satellite.
+    """
     def __init__(self, prn):
+        """
+        Creer un satellite en l'identifiant par son prn.
+        """
         self.prn = prn
         self.elevation = []
         self.azimuth = []
     
     def add_pos(self, elevation, azimuth):
+        """
+        Ajoute une nouvelle position du satellite au format elevation/azimuth.
+        """
         self.elevation.append(elevation)
         self.azimuth.append(azimuth)
     
     def get_azimuth(self):
+        """
+        Renvoie la liste des azimuths.
+        """
         return self.azimuth
     
     def get_elevation(self):
+        """
+        Renvoie la liste des élévations.
+        """
         return self.elevation
     
     def get_prn(self):
+        """
+        Renvoie le prn.
+        """
         return self.prn
 
 
-def dmstodd(degre):
+def dmtodd(degre):
+    """
+    Converti une longitude/lattitude du format degré°minute vers le format
+    degré décimal.
+    """
+    # Récupération des degrées
     d = int(degre/100)
+    # Récupération des minutes en décimal
     m = degre - d*100
+    # Conversion des minutes en minutes d'angles
     return d + m/60
 
 def traitement(msgs):
+    """
+    Fonction principale qui traite les trames nmea et affiches les graphiques.
+    """
     trames = []
     for msg in msgs:
         try:
@@ -43,22 +75,28 @@ def traitement(msgs):
         except:
             pass
 
+    # Stockage de la longitude et lattitude du récepteur.
     long = []
     lat = []
 
+    # temps suit l'heure de reception des trames
     temps = None
-
+    
+    # Stockage des satellites
     satellites = dict()
 
+    # Stockage de la disponnibilité des sattelites
     satellite_a = dict()
 
     # Lecture des donnees
     for trame in trames:
+        # Traitement des trames GGA
         if trame.sentence_type == 'GGA' and trame.is_valid:
             long.append(float(trame.lon))
             lat.append(float(trame.lat))
             temps = trame.timestamp    
 
+        # Traitement des trames GSA
         if trame.sentence_type == 'GSA':
             temps_str=str(temps.hour)+':'+str(temps.minute)+':'+str(temps.second)
             satellite_a[temps_str]=[]
@@ -99,6 +137,7 @@ def traitement(msgs):
             if trame.sv_id12!='':
                 satellite_a[temps_str].append(int(trame.sv_id12))
 
+        # Traitement des trames GSV
         if trame.sentence_type == 'GSV':
             if len(trame.sv_prn_num_1) > 0:
                 prn = trame.sv_prn_num_1 #dictionnaire prn
@@ -152,8 +191,8 @@ def traitement(msgs):
     # Affichage des donnees
 
     # Conversion en degrés décimaux
-    long = [-dmstodd(x) for x in long]
-    lat = [dmstodd(x) for x in lat]
+    long = [-dmtodd(x) for x in long]
+    lat = [dmtodd(x) for x in lat]
 
     # Affichage sur une carte
     im = gdal.Open('res/ensta_2015.jpg')
