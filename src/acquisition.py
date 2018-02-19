@@ -10,12 +10,17 @@ from serial import Serial
 from time import time
 
 
-def acquisition(t_acq):
+def acquisition(t_acq, port, baudrate):
     """
     Connection au GPS et acquisition des trames nmea.
+    Paramètres:
+    -----------
+    t_acq: temps d'acquisition
+    port: port du gps
+    baudrate: fréquence du gps
     """
     # Connection au GPS à l'address 
-    gps = Serial('/dev/ttyUSB0', 4800)
+    gps = Serial(port, baudrate)
     
     lines = []
     
@@ -36,6 +41,8 @@ if __name__=='__main__':
     
     t_acq = 10 # Temps d'acquisition
     out = 'data' # Nom du fichier de sorti
+    port = None
+    baudrate = None
     
     # Lecture des arguments
     # -t t_acq -o out
@@ -48,10 +55,16 @@ if __name__=='__main__':
         elif sys.argv[i] == '-t':
             t_acq = int(sys.argv[i+1])
             i += 2
+        elif sys.argv[i] == '--port':
+            port = sys.argv[i+1]
+            i += 2
+        elif sys.argv[i] == '--baudrate':
+            baudrate = int(sys.argv[i+1])
+            i += 2
         else:
             i += 1
     
-    lines = acquisition(t_acq)
+    lines = acquisition(t_acq, port, baudrate)
     with open(out, 'w') as f:
         for line in lines:
             f.write(line + '\n')
