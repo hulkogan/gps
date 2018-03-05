@@ -99,44 +99,43 @@ def traitement(msgs):
 
         # Traitement des trames GSA
         if trame.sentence_type == 'GSA':
-            temps_str=str(temps.hour)+':'+str(temps.minute)+':'+str(temps.second)
-            satellite_a[temps_str]=[]
+            satellite_a[temps]=[]
             
             if trame.sv_id01!='':
-                satellite_a[temps_str].append(int(trame.sv_id01))
+                satellite_a[temps].append(int(trame.sv_id01))
 
             if trame.sv_id02!='':
-                satellite_a[temps_str].append(int(trame.sv_id02))
+                satellite_a[temps].append(int(trame.sv_id02))
                 
             if trame.sv_id03!='':
-                satellite_a[temps_str].append(int(trame.sv_id03))
+                satellite_a[temps].append(int(trame.sv_id03))
                 
             if trame.sv_id04!='':
-                satellite_a[temps_str].append(int(trame.sv_id04))
+                satellite_a[temps].append(int(trame.sv_id04))
                 
             if trame.sv_id05!='':
-                satellite_a[temps_str].append(int(trame.sv_id05))
+                satellite_a[temps].append(int(trame.sv_id05))
 
             if trame.sv_id06!='':
-                satellite_a[temps_str].append(int(trame.sv_id06))
+                satellite_a[temps].append(int(trame.sv_id06))
                 
             if trame.sv_id07!='':
-                satellite_a[temps_str].append(int(trame.sv_id07))
+                satellite_a[temps].append(int(trame.sv_id07))
   
             if trame.sv_id08!='':
-                satellite_a[temps_str].append(int(trame.sv_id08))
+                satellite_a[temps].append(int(trame.sv_id08))
                 
             if trame.sv_id09!='':
-                satellite_a[temps_str].append(int(trame.sv_id09))
+                satellite_a[temps].append(int(trame.sv_id09))
                 
             if trame.sv_id10!='':
-                satellite_a[temps_str].append(int(trame.sv_id10))  
+                satellite_a[temps].append(int(trame.sv_id10))  
                 
             if trame.sv_id11!='':
-                satellite_a[temps_str].append(int(trame.sv_id11))  
+                satellite_a[temps].append(int(trame.sv_id11))  
                 
             if trame.sv_id12!='':
-                satellite_a[temps_str].append(int(trame.sv_id12))
+                satellite_a[temps].append(int(trame.sv_id12))
 
         # Traitement des trames GSV
         if trame.sentence_type == 'GSV':
@@ -234,9 +233,6 @@ def traitement(msgs):
     axes=plt.gca()
     for i in range(len(x)):
         plt.plot(x[i],y[i],'go')
-    ab=np.linspace(0,len(x)-1,15)
-    xlab=[x[int(i)][0] for i in ab]
-    plt.xticks(ab,xlab)
     axes.set_yticks([i for i in range(1,33)])
     plt.xlabel('Heure',Fontsize=20,FontWeight='bold') ## ZULU OU AUTRE?
     plt.ylabel('Satellite numéro',Fontsize=20,FontWeight='bold')
